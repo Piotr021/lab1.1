@@ -55,7 +55,7 @@ namespace lab1._1
             {
                 Id = 3,
                 Customer = Customers[2],
-                OrderDate = DateTime.Now.AddDays(-6),
+                OrderDate = DateTime.Now.AddDays(-5),
                 Status = OrderStatus.Cancelled,
                 Items = new List<OrderItem>
                 {
