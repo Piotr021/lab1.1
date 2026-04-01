@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lab1._1
+namespace lab1_1_net10
 {
     // tworzenie delegaty ( typ danych przechowujący referencję do odpowiednich metod (reguł) )
     public delegate bool ValidationRule(Order order, out string errorMessage);
