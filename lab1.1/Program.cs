@@ -133,8 +133,31 @@ namespace lab1_1_net10
             Console.WriteLine("\n=== Koniec zadania 3 ===");
             LinqTasks.Run();
 
+            Console.WriteLine("\n=== Koniec zadania 4 ===");
             Console.WriteLine("\nNaciśnij dowolny klawisz, aby zakończyć...");
             Console.ReadKey();
+
+
+            var pipeline = new OrderPipeline();
+
+            var logger = new ConsoleLogger();
+            var email = new EmailNotifier();
+            var stats = new OrderStatistics();
+
+            pipeline.ValidationCompleted += logger.OnValidationCompleted;
+            pipeline.StatusChanged += logger.OnStatusChanged;
+
+            pipeline.StatusChanged += email.OnStatusChanged;
+
+            pipeline.ValidationCompleted += stats.OnValidationCompleted;
+            pipeline.StatusChanged += stats.OnStatusChanged;
+
+            foreach (var order in SampleData.OrdersForPipeline)
+            {
+                pipeline.ProcessOrder(order);
+            }
+
+            stats.PrintStatistics();
         }
     }
 }
