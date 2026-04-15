@@ -131,6 +131,10 @@ namespace lab1_1_net10
             );
 
             Console.WriteLine("\n=== Koniec zadania 3 ===");
+            LinqTasks.Run();
+
+            Console.WriteLine("\nNaciśnij dowolny klawisz, aby zakończyć...");
+            Console.ReadKey();
         }
     }
 }
