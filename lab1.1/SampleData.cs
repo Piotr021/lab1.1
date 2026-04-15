@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lab1._1
+namespace lab1_1_net10
 {
     public static class SampleData
     {
@@ -55,11 +55,11 @@ namespace lab1._1
             {
                 Id = 3,
                 Customer = Customers[2],
-                OrderDate = DateTime.Now.AddDays(-6),
+                OrderDate = DateTime.Now.AddDays(-5),
                 Status = OrderStatus.Cancelled,
                 Items = new List<OrderItem>
                 {
-                    new OrderItem { Product = Products[2], Quantity = 1 }
+                    new OrderItem { Product = Products[2], Quantity = 0 }
                 }
             },
             new Order
