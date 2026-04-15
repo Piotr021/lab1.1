@@ -8,7 +8,7 @@ namespace lab1_1_net10
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var validator = new OrderValidator();
             Console.WriteLine("Walidacja zamówień\n");
@@ -158,6 +158,18 @@ namespace lab1_1_net10
             }
 
             stats.PrintStatistics();
+
+            Console.WriteLine("\n=== ZADANIE 2 - Asynchroniczne pobieranie danych ===\n");
+
+            var externalService = new ExternalServiceSimulator();
+
+            // bierzemy przykładowe zamówienia z danych
+            var asyncOrders = SampleData.OrdersForPipeline.Take(3).ToList();
+
+            await externalService.CompareSequentialVsParallelAsync(asyncOrders);
+
+            Console.WriteLine("\n=== Koniec zadania 2 ===");
+
         }
     }
 }
