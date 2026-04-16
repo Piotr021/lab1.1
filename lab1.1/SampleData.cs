@@ -142,5 +142,32 @@ namespace lab1_1_net10
                 }
             }
         };
+        public static List<Order> CreateOrdersForStatisticsDemo(int repeatCount)
+        {
+            var orders = new List<Order>();
+            int nextId = 1000;
+
+            for (int i = 0; i < repeatCount; i++)
+            {
+                foreach (var order in OrdersForPipeline)
+                {
+                    orders.Add(CloneOrder(order, nextId++));
+                }
+            }
+
+            return orders;
+        }
+
+        private static Order CloneOrder(Order source, int newId)
+        {
+            return new Order
+            {
+                Id = newId,
+                Customer = source.Customer,
+                OrderDate = source.OrderDate,
+                Status = source.Status,
+                Items = source.Items
+            };
+        }
     }
 }
