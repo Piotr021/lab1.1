@@ -25,6 +25,50 @@ namespace lab1_1_net10
             new Customer { Id = 4, Name = "Katarzyna Zielińska", Email = "kasia@example.com", IsVip = true }
         };
 
+        public static List<Order> OrdersForPipeline = new List<Order>
+        {
+        new Order
+        {
+            Id = 101,
+            Customer = Customers[0],
+            OrderDate = DateTime.Now,
+            Status = OrderStatus.New,
+            Items = new List<OrderItem>
+            {
+                new OrderItem { Product = Products[0], Quantity = 1 },
+                new OrderItem { Product = Products[4], Quantity = 2 }
+            }
+        },
+        new Order
+        {
+            Id = 102,
+            Customer = Customers[1],
+            OrderDate = DateTime.Now,
+            Status = OrderStatus.New,
+            Items = new List<OrderItem>
+            {
+                new OrderItem { Product = Products[3], Quantity = 1 }
+            }
+        },
+        new Order
+        {
+            Id = 103,
+            Customer = new Customer
+            {
+                Id = 99,
+                Name = "Test Błędny",
+                Email = ""
+            },
+            OrderDate = DateTime.Now,
+            Status = OrderStatus.New,
+            Items = new List<OrderItem>
+            {
+                new OrderItem { Product = Products[2], Quantity = 0 }
+            }
+        }
+        };
+
+
         public static List<Order> Orders = new List<Order>
         {
             new Order
@@ -98,5 +142,32 @@ namespace lab1_1_net10
                 }
             }
         };
+        public static List<Order> CreateOrdersForStatisticsDemo(int repeatCount)
+        {
+            var orders = new List<Order>();
+            int nextId = 1000;
+
+            for (int i = 0; i < repeatCount; i++)
+            {
+                foreach (var order in OrdersForPipeline)
+                {
+                    orders.Add(CloneOrder(order, nextId++));
+                }
+            }
+
+            return orders;
+        }
+
+        private static Order CloneOrder(Order source, int newId)
+        {
+            return new Order
+            {
+                Id = newId,
+                Customer = source.Customer,
+                OrderDate = source.OrderDate,
+                Status = source.Status,
+                Items = source.Items
+            };
+        }
     }
 }

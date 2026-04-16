@@ -8,7 +8,7 @@ namespace lab1_1_net10
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var validator = new OrderValidator();
             Console.WriteLine("Walidacja zamówień\n");
@@ -133,8 +133,164 @@ namespace lab1_1_net10
             Console.WriteLine("\n=== Koniec zadania 3 ===");
             LinqTasks.Run();
 
+            Console.WriteLine("\n=== Koniec zadania 4 ===");
             Console.WriteLine("\nNaciśnij dowolny klawisz, aby zakończyć...");
             Console.ReadKey();
+
+
+            var pipeline = new OrderPipeline();
+
+            var logger = new ConsoleLogger();
+            var email = new EmailNotifier();
+            var stats = new OrderStatistics();
+
+            pipeline.ValidationCompleted += logger.OnValidationCompleted;
+            pipeline.StatusChanged += logger.OnStatusChanged;
+
+            pipeline.StatusChanged += email.OnStatusChanged;
+
+            pipeline.ValidationCompleted += stats.OnValidationCompleted;
+            pipeline.StatusChanged += stats.OnStatusChanged;
+
+            foreach (var order in SampleData.OrdersForPipeline)
+            {
+                pipeline.ProcessOrder(order);
+            }
+
+            stats.PrintStatistics();
+
+            Console.WriteLine("\n=== ZADANIE 2 - Asynchroniczne pobieranie danych ===\n");
+
+            var externalService = new ExternalServiceSimulator();
+
+            // bierzemy przykładowe zamówienia z danych
+            var asyncOrders = SampleData.OrdersForPipeline.Take(3).ToList();
+
+            await externalService.CompareSequentialVsParallelAsync(asyncOrders);
+
+            Console.WriteLine("\n=== Koniec zadania 2 ===");
+
+
+
+            RunThreadSafetyDemo();
+
+            Console.WriteLine("\n=== Koniec zadania 3 ===");
+        }
+
+        
+
+        private static void RunThreadSafetyDemo()
+        {
+            Console.WriteLine("\n=== ZADANIE 3 - Thread safety ===\n");
+
+            // const - stała wartość
+            // ile razy powielić dane testowe
+            const int repeatCount = 4000;
+            // ile razy uruchomić test
+            const int runs = 5;
+
+            // tworzy liste zamówień testowych
+            var expectedOrders = SampleData.CreateOrdersForStatisticsDemo(repeatCount);
+            // oblicza oczekiwany wynik na podstawie tych zamówień
+            string expected = CalculateExpectedSnapshot(expectedOrders);
+
+            Console.WriteLine("Oczekiwany wynik:");
+            Console.WriteLine(expected);
+            Console.WriteLine();
+
+            Console.WriteLine("----- WERSJA UNSAFE -----");
+
+            for (int i = 1; i <= runs; i++)
+            {
+                // lista zamówień testowych
+                var orders = SampleData.CreateOrdersForStatisticsDemo(repeatCount);
+                // obiekt do zbierania statystyk
+                var stats = new Orderstatistics2();
+                // obiekt do sprawdzania, czy zamówienie jest poprawne
+                var validator = new OrderValidator();
+
+                // przejdź po wszystkich zamówieniach, rób to równolegle, na wielu wątkach
+                Parallel.ForEach(orders, order =>
+                {
+                    // sprawdź, czy zamówienie jest poprawne, zbierz błędy
+                    var errors = validator.ValidateAll(order);
+                    // jeśli nie ma błędów, to jest poprawne
+                    bool isValid = errors.Count == 0;
+
+                    if (isValid)
+                        order.Status = OrderStatus.Completed;
+                    // zaktualizuj statystyki, w sposób niebezpieczny (bez synchronizacji)
+                    stats.UpdateUnsafe(order, isValid, errors);
+                });
+                // wypisz wynik, porównaj z oczekiwanym
+                Console.WriteLine($"Run {i}: {stats.ToComparableSnapshot()}");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("----- WERSJA SAFE -----");
+
+            for (int i = 1; i <= runs; i++)
+            {
+                // lista zamówień testowych
+                var orders = SampleData.CreateOrdersForStatisticsDemo(repeatCount);
+                // obiekt do zbierania statystyk
+                var stats = new Orderstatistics2();
+                // obiekt do sprawdzania, czy zamówienie jest poprawne
+                var validator = new OrderValidator();
+
+                // przejdź po wszystkich zamówieniach, rób to równolegle, na wielu wątkach
+                Parallel.ForEach(orders, order =>
+                {
+
+                    // sprawdź, czy zamówienie jest poprawne, zbierz błędy
+                    var errors = validator.ValidateAll(order);
+                    // jeśli nie ma błędów, to jest poprawne
+                    bool isValid = errors.Count == 0;
+
+                    if (isValid)
+                        order.Status = OrderStatus.Completed;
+
+                    // zaktualizuj statystyki, w sposób bezpieczny (z synchronizacją)
+                    stats.UpdateSafe(order, isValid, errors);
+                });
+                // wypisz wynik, porównaj z oczekiwanym
+                Console.WriteLine($"Run {i}: {stats.ToComparableSnapshot()}");
+            }
+        }
+
+            private static string CalculateExpectedSnapshot(List<Order> orders)
+        {
+            // obiekt do sprawdzania, czy zamówienie jest poprawne
+            var validator = new OrderValidator();
+            // liczba wszystkich zamówień
+            int totalProcessed = orders.Count;
+            // suma wartości zamówień
+            decimal totalRevenue = 0m;
+            // liczba zamówień poprawnych,zakończonych
+            int completed = 0;
+            // liczba błędów
+            int errorsCount = 0;
+
+            foreach (var order in orders)
+            {
+                // sprawdź, czy zamówienie jest poprawne, zbierz błędy
+                var errors = validator.ValidateAll(order);
+
+                if (errors.Count == 0)
+                {
+                    totalRevenue += order.TotalAmount;
+                    completed++;
+                }
+                else
+                {
+                    errorsCount += errors.Count;
+                }
+            }
+
+            return $"Processed={totalProcessed}; Revenue={totalRevenue}; Statuses=[Completed={completed}]; Errors={errorsCount}";
+
+
+
         }
     }
 }
