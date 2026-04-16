@@ -260,15 +260,20 @@ namespace lab1_1_net10
 
             private static string CalculateExpectedSnapshot(List<Order> orders)
         {
+            // obiekt do sprawdzania, czy zamówienie jest poprawne
             var validator = new OrderValidator();
-
+            // liczba wszystkich zamówień
             int totalProcessed = orders.Count;
+            // suma wartości zamówień
             decimal totalRevenue = 0m;
+            // liczba zamówień poprawnych,zakończonych
             int completed = 0;
+            // liczba błędów
             int errorsCount = 0;
 
             foreach (var order in orders)
             {
+                // sprawdź, czy zamówienie jest poprawne, zbierz błędy
                 var errors = validator.ValidateAll(order);
 
                 if (errors.Count == 0)
