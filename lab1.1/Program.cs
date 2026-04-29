@@ -264,7 +264,61 @@ namespace lab1_1_net10
 
             Console.WriteLine("\n=== Koniec zadania 2 ===");
 
+            // Obiekty do walidacji zamówień
+            var validator2 = new OrderValidator();
+            // Obiekty wypisujące informacje w konsoli
+            var logger2 = new ConsoleLogger();
+            // Obiekt symulujący wysyłania powiadomień email
+            var notifier = new EmailNotifier();
 
+            // Obiekt do przetwarzania zamówień
+            var pipeline2 = new OrderPipeline();
+
+            // Reakcja na zmianę statusu zamówienia - wypisanie informacji w konsoli
+            pipeline2.StatusChanged += (sender, e) =>
+            {
+                Console.WriteLine(
+                    $"STATUS: Zamówienie {e.Order.Id} -> {e.NewStatus}");
+            };
+
+            // Ścieżka do folderu "inbox" (aktualny folder działania programu + inbox)
+            var inboxPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "inbox");
+
+            // Obiekt do monitorowania folderu "inbox"
+            using var watcher = new InboxWatcher(inboxPath, pipeline2);
+
+            Console.WriteLine("Program działa...");
+            Console.WriteLine("Tworzenie testowych plików co 3 sekundy...\n");
+
+
+            for (int i = 1; i <= 3; i++)
+            {
+                // Pobieranie zamówienia z danych
+                var orders3 = SampleData.OrdersForPipeline;
+
+                // Tworzenie unikalnej nazwy pliku
+                var fileName = $"orders_{DateTime.Now:HHmmss}_{i}.json";
+
+                // Pełna ścieżka do pliku w folderze "inbox"
+                var path = Path.Combine(inboxPath, fileName);
+
+                // Obiekt do zarządzania zamówieniami i ich zapisem/odczytem
+                var repository2 = new OrderRepository();
+
+                // Zapis zamówień do pliku JSON
+                await repository2.SaveToJsonAsync(orders3, path);
+
+                Console.WriteLine($"Utworzono plik: {fileName}");
+
+                // Odczekaj 3 sekundy przed utworzeniem kolejnego pliku
+                await Task.Delay(3000);
+            }
+
+            Console.WriteLine("\n=== Koniec zadania 3 ===");
+            Console.WriteLine("Naciśnij ENTER aby zakończyć...");
+            Console.ReadLine();
 
         }
         private static void RunThreadSafetyDemo()
