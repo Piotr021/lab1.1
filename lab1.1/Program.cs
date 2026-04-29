@@ -228,10 +228,45 @@ namespace lab1_1_net10
             Console.WriteLine($"JSON round-trip OK: {jsonOk}");
             Console.WriteLine($"XML round-trip OK: {xmlOk}");
             Console.WriteLine();
+
+            Console.WriteLine("\n=== Koniec zadania 1 ===");
+
+            // Wczytywanie danych z sample data
+            var orders2 = SampleData.Orders;
+
+            // Obiekt do budowania raportu XML
+            var reportBuilder = new XmlReportBuilder();
+
+            // Budowanie raportu na podstawie zamówień
+            var report = reportBuilder.BuildReport(orders2);
+
+            // Zapis raportu do pliku
+            await reportBuilder.SaveReportAsync(
+                report,
+                "data/report.xml");
+
+            Console.WriteLine(
+                "Raport XML został zapisany do data/report.xml");
+
+            // Asynchroniczne pobieranie identyfikatorów zamówień o wartości powyżej 1000 zł z raportu XML
+            var highValueOrders2 = await reportBuilder
+                .FindHighValueOrderIdsAsync(
+                    "data/report.xml",
+                    1000m);
+
+            Console.WriteLine();
+            Console.WriteLine("Zamówienia powyżej 1000:");
+
+            foreach (var orderId in highValueOrders2)
+            {
+                Console.WriteLine($"Order ID: {orderId}");
+            }
+
+            Console.WriteLine("\n=== Koniec zadania 2 ===");
+
+
+
         }
-
-        
-
         private static void RunThreadSafetyDemo()
         {
             Console.WriteLine("\n=== ZADANIE 3 - Thread safety ===\n");
