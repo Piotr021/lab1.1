@@ -175,6 +175,59 @@ namespace lab1_1_net10
             RunThreadSafetyDemo();
 
             Console.WriteLine("\n=== Koniec zadania 3 ===");
+
+
+            // tworzenie obiektu do zarządzania zamówieniami i ich zapisem/odczytem
+            var repository = new OrderRepository();
+
+            // ścieżki do plików
+            const string jsonPath = "data/orders.json";
+            const string xmlPath = "data/orders.xml";
+
+            // dane z sample data
+            var originalOrders = SampleData.Orders.ToList();
+
+            Console.WriteLine("=== ZADANIE 1 - Repozytorium JSON/XML ===\n");
+
+            Console.WriteLine($"Liczba oryginalnych zamówień: {originalOrders.Count}");
+            Console.WriteLine($"Suma oryginalnych kwot: {originalOrders.Sum(o => o.TotalAmount):C}");
+
+            // zapis do plików json i xml
+            await repository.SaveToJsonAsync(originalOrders, jsonPath);
+            await repository.SaveToXmlAsync(originalOrders, xmlPath);
+
+            // czyszczenie pamięci
+            originalOrders = new List<Order>();
+
+            // wczytywanie danych z plików json i xml
+            var loadedFromJson = await repository.LoadFromJsonAsync(jsonPath);
+            var loadedFromXml = await repository.LoadFromXmlAsync(xmlPath);
+
+            Console.WriteLine("\n--- JSON ---");
+            Console.WriteLine($"Wczytano zamówień: {loadedFromJson.Count}");
+            Console.WriteLine($"Suma kwot: {loadedFromJson.Sum(o => o.TotalAmount):C}");
+
+            Console.WriteLine("\n--- XML ---");
+            Console.WriteLine($"Wczytano zamówień: {loadedFromXml.Count}");
+            Console.WriteLine($"Suma kwot: {loadedFromXml.Sum(o => o.TotalAmount):C}");
+
+            // porównanie wyników z oryginalnymi danymi
+            // liczba zamówień
+            var originalCount = SampleData.Orders.Count;
+            // suma kwot zamówień
+            var originalSum = SampleData.Orders.Sum(o => o.TotalAmount);
+
+            // porównanie liczby zamówień i sumy kwot dla danych wczytanych z json i xml z oryginalnymi danymi
+            bool jsonOk = loadedFromJson.Count == originalCount
+                          && loadedFromJson.Sum(o => o.TotalAmount) == originalSum;
+
+            bool xmlOk = loadedFromXml.Count == originalCount
+                         && loadedFromXml.Sum(o => o.TotalAmount) == originalSum;
+
+            Console.WriteLine("\n--- PORÓWNANIE ---");
+            Console.WriteLine($"JSON round-trip OK: {jsonOk}");
+            Console.WriteLine($"XML round-trip OK: {xmlOk}");
+            Console.WriteLine();
         }
 
         
