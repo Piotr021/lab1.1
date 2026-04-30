@@ -175,10 +175,152 @@ namespace lab1_1_net10
             RunThreadSafetyDemo();
 
             Console.WriteLine("\n=== Koniec zadania 3 ===");
+
+
+            // tworzenie obiektu do zarządzania zamówieniami i ich zapisem/odczytem
+            var repository = new OrderRepository();
+
+            // ścieżki do plików
+            const string jsonPath = "data/orders.json";
+            const string xmlPath = "data/orders.xml";
+
+            // dane z sample data
+            var originalOrders = SampleData.Orders.ToList();
+
+            Console.WriteLine("=== ZADANIE 1 - Repozytorium JSON/XML ===\n");
+
+            Console.WriteLine($"Liczba oryginalnych zamówień: {originalOrders.Count}");
+            Console.WriteLine($"Suma oryginalnych kwot: {originalOrders.Sum(o => o.TotalAmount):C}");
+
+            // zapis do plików json i xml
+            await repository.SaveToJsonAsync(originalOrders, jsonPath);
+            await repository.SaveToXmlAsync(originalOrders, xmlPath);
+
+            // czyszczenie pamięci
+            originalOrders = new List<Order>();
+
+            // wczytywanie danych z plików json i xml
+            var loadedFromJson = await repository.LoadFromJsonAsync(jsonPath);
+            var loadedFromXml = await repository.LoadFromXmlAsync(xmlPath);
+
+            Console.WriteLine("\n--- JSON ---");
+            Console.WriteLine($"Wczytano zamówień: {loadedFromJson.Count}");
+            Console.WriteLine($"Suma kwot: {loadedFromJson.Sum(o => o.TotalAmount):C}");
+
+            Console.WriteLine("\n--- XML ---");
+            Console.WriteLine($"Wczytano zamówień: {loadedFromXml.Count}");
+            Console.WriteLine($"Suma kwot: {loadedFromXml.Sum(o => o.TotalAmount):C}");
+
+            // porównanie wyników z oryginalnymi danymi
+            // liczba zamówień
+            var originalCount = SampleData.Orders.Count;
+            // suma kwot zamówień
+            var originalSum = SampleData.Orders.Sum(o => o.TotalAmount);
+
+            // porównanie liczby zamówień i sumy kwot dla danych wczytanych z json i xml z oryginalnymi danymi
+            bool jsonOk = loadedFromJson.Count == originalCount
+                          && loadedFromJson.Sum(o => o.TotalAmount) == originalSum;
+
+            bool xmlOk = loadedFromXml.Count == originalCount
+                         && loadedFromXml.Sum(o => o.TotalAmount) == originalSum;
+
+            Console.WriteLine("\n--- PORÓWNANIE ---");
+            Console.WriteLine($"JSON round-trip OK: {jsonOk}");
+            Console.WriteLine($"XML round-trip OK: {xmlOk}");
+            Console.WriteLine();
+
+            Console.WriteLine("\n=== Koniec zadania 1 ===");
+
+            // Wczytywanie danych z sample data
+            var orders2 = SampleData.Orders;
+
+            // Obiekt do budowania raportu XML
+            var reportBuilder = new XmlReportBuilder();
+
+            // Budowanie raportu na podstawie zamówień
+            var report = reportBuilder.BuildReport(orders2);
+
+            // Zapis raportu do pliku
+            await reportBuilder.SaveReportAsync(
+                report,
+                "data/report.xml");
+
+            Console.WriteLine(
+                "Raport XML został zapisany do data/report.xml");
+
+            // Asynchroniczne pobieranie identyfikatorów zamówień o wartości powyżej 1000 zł z raportu XML
+            var highValueOrders2 = await reportBuilder
+                .FindHighValueOrderIdsAsync(
+                    "data/report.xml",
+                    1000m);
+
+            Console.WriteLine();
+            Console.WriteLine("Zamówienia powyżej 1000:");
+
+            foreach (var orderId in highValueOrders2)
+            {
+                Console.WriteLine($"Order ID: {orderId}");
+            }
+
+            Console.WriteLine("\n=== Koniec zadania 2 ===");
+
+            // Obiekty do walidacji zamówień
+            var validator2 = new OrderValidator();
+            // Obiekty wypisujące informacje w konsoli
+            var logger2 = new ConsoleLogger();
+            // Obiekt symulujący wysyłania powiadomień email
+            var notifier = new EmailNotifier();
+
+            // Obiekt do przetwarzania zamówień
+            var pipeline2 = new OrderPipeline();
+
+            // Reakcja na zmianę statusu zamówienia - wypisanie informacji w konsoli
+            pipeline2.StatusChanged += (sender, e) =>
+            {
+                Console.WriteLine(
+                    $"STATUS: Zamówienie {e.Order.Id} -> {e.NewStatus}");
+            };
+
+            // Ścieżka do folderu "inbox" (aktualny folder działania programu + inbox)
+            var inboxPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "inbox");
+
+            // Obiekt do monitorowania folderu "inbox"
+            using var watcher = new InboxWatcher(inboxPath, pipeline2);
+
+            Console.WriteLine("Program działa...");
+            Console.WriteLine("Tworzenie testowych plików co 3 sekundy...\n");
+
+
+            for (int i = 1; i <= 3; i++)
+            {
+                // Pobieranie zamówienia z danych
+                var orders3 = SampleData.OrdersForPipeline;
+
+                // Tworzenie unikalnej nazwy pliku
+                var fileName = $"orders_{DateTime.Now:HHmmss}_{i}.json";
+
+                // Pełna ścieżka do pliku w folderze "inbox"
+                var path = Path.Combine(inboxPath, fileName);
+
+                // Obiekt do zarządzania zamówieniami i ich zapisem/odczytem
+                var repository2 = new OrderRepository();
+
+                // Zapis zamówień do pliku JSON
+                await repository2.SaveToJsonAsync(orders3, path);
+
+                Console.WriteLine($"Utworzono plik: {fileName}");
+
+                // Odczekaj 3 sekundy przed utworzeniem kolejnego pliku
+                await Task.Delay(3000);
+            }
+
+            Console.WriteLine("\n=== Koniec zadania 3 ===");
+            Console.WriteLine("Naciśnij ENTER aby zakończyć...");
+            Console.ReadLine();
+
         }
-
-        
-
         private static void RunThreadSafetyDemo()
         {
             Console.WriteLine("\n=== ZADANIE 3 - Thread safety ===\n");
