@@ -23,5 +23,9 @@ namespace lab1_1_net10
         // XmlAttribute - atrybut określający, że dana właściwość będzie reprezentowana jako atrybut w formacie XML
         [XmlAttribute("vip")]
         public bool IsVip { get; set; }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }
