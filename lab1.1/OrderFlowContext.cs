@@ -15,8 +15,8 @@ namespace lab1_1_net10
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlite("Data Source=orderflow.db")
-                .LogTo(Console.WriteLine);
+                .UseSqlite("Data Source=orderflow.db");
+                //.LogTo(Console.WriteLine);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
