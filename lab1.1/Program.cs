@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 
 namespace lab1_1_net10
@@ -12,6 +13,8 @@ namespace lab1_1_net10
     {
         static async Task Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             var validator = new OrderValidator();
             Console.WriteLine("Walidacja zamówień\n");
             foreach (var order in SampleData.Orders)
@@ -329,6 +332,8 @@ namespace lab1_1_net10
 
             // Wypełnienie bazy danymi z SampleData
             await DatabaseSeeder.SeedAsync(db);
+
+            await DbQueryAndTransactionTasks.RunAsync(db);
 
             Console.WriteLine("\nCRUD\n");
 

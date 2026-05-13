@@ -25,7 +25,8 @@ namespace lab1_1_net10
                 Id = p.Id,
                 Name = p.Name,
                 Category = p.Category,
-                Price = p.Price
+                Price = p.Price,
+                Stock = p.Stock
             }).ToList();
 
             // Mapowanie danych z SampleData do obiektów przygotowanych do zapisania w bazie
@@ -34,6 +35,7 @@ namespace lab1_1_net10
                 Id = c.Id,
                 Name = c.Name,
                 Email = c.Email,
+                City = c.City,
                 IsVip = c.IsVip
             }).ToList();
 

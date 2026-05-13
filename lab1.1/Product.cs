@@ -18,5 +18,10 @@ namespace lab1_1_net10
         public string Name { get; set; } = "";
         public string Category { get; set; } = "";
         public decimal Price { get; set; }
+
+        public int Stock { get; set; }
+
+        [XmlIgnore]
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

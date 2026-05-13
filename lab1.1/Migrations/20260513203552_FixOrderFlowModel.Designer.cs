@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lab1_1_net10;
 
@@ -10,9 +11,11 @@ using lab1_1_net10;
 namespace lab1_1_net10.Migrations
 {
     [DbContext(typeof(OrderFlowContext))]
-    partial class OrderFlowContextModelSnapshot : ModelSnapshot
+    [Migration("20260513203552_FixOrderFlowModel")]
+    partial class FixOrderFlowModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.7");

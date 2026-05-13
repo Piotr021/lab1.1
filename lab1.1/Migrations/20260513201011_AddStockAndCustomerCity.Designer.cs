@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lab1_1_net10;
 
@@ -10,9 +11,11 @@ using lab1_1_net10;
 namespace lab1_1_net10.Migrations
 {
     [DbContext(typeof(OrderFlowContext))]
-    partial class OrderFlowContextModelSnapshot : ModelSnapshot
+    [Migration("20260513201011_AddStockAndCustomerCity")]
+    partial class AddStockAndCustomerCity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.7");
@@ -22,10 +25,6 @@ namespace lab1_1_net10.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -120,9 +119,6 @@ namespace lab1_1_net10.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Stock")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -148,7 +144,7 @@ namespace lab1_1_net10.Migrations
                         .IsRequired();
 
                     b.HasOne("lab1_1_net10.Product", "Product")
-                        .WithMany("OrderItems")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -166,11 +162,6 @@ namespace lab1_1_net10.Migrations
             modelBuilder.Entity("lab1_1_net10.Order", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("lab1_1_net10.Product", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,19 +10,20 @@ namespace lab1_1_net10
     {
         public static List<Product> Products = new List<Product>
         {
-            new Product { Id = 1, Name = "Laptop", Category = "Electronics", Price = 3500m },
-            new Product { Id = 2, Name = "Smartphone", Category = "Electronics", Price = 2200m },
-            new Product { Id = 3, Name = "Desk Chair", Category = "Furniture", Price = 800m },
-            new Product { Id = 4, Name = "Coffee Maker", Category = "Home Appliances", Price = 300m },
-            new Product { Id = 5, Name = "Headphones", Category = "Electronics", Price = 450m }
+            new Product { Id = 1, Name = "Laptop", Category = "Electronics", Price = 3500m, Stock = 10 },
+            new Product { Id = 2, Name = "Smartphone", Category = "Electronics", Price = 2200m, Stock = 10 },
+            new Product { Id = 3, Name = "Desk Chair", Category = "Furniture", Price = 800m, Stock = 10 },
+            new Product { Id = 4, Name = "Coffee Maker", Category = "Home Appliances", Price = 300m, Stock = 10 },
+            new Product { Id = 5, Name = "Headphones", Category = "Electronics", Price = 450m, Stock = 10 },
+            new Product { Id = 6, Name = "Monitor", Category = "Electronics", Price = 1200m, Stock = 10 }
         };
 
         public static List<Customer> Customers = new List<Customer>
         {
-            new Customer { Id = 1, Name = "Jan Kowalski", Email = "jan@example.com", IsVip = false },
-            new Customer { Id = 2, Name = "Anna Nowak", Email = "anna@example.com", IsVip = true },
-            new Customer { Id = 3, Name = "Piotr Wiśniewski", Email = "piotr@example.com", IsVip = false },
-            new Customer { Id = 4, Name = "Katarzyna Zielińska", Email = "kasia@example.com", IsVip = true }
+            new Customer { Id = 1, Name = "Jan Kowalski", Email = "jan@example.com", City = "Warszawa", IsVip = false },
+            new Customer { Id = 2, Name = "Anna Nowak", Email = "anna@example.com", City = "Kraków", IsVip = true },
+            new Customer { Id = 3, Name = "Piotr Wiśniewski", Email = "piotr@example.com", City = "Warszawa", IsVip = false },
+            new Customer { Id = 4, Name = "Katarzyna Zielińska", Email = "kasia@example.com", City = "Gdańsk", IsVip = true }
         };
 
         public static List<Order> OrdersForPipeline = new List<Order>

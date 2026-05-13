@@ -35,7 +35,7 @@ namespace lab1_1_net10
 
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Product)
-                .WithMany()
+                .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId);
 
             modelBuilder.Entity<Order>()
