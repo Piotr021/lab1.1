@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 
 namespace lab1_1_net10
 {
@@ -10,6 +13,8 @@ namespace lab1_1_net10
     {
         static async Task Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             var validator = new OrderValidator();
             Console.WriteLine("Walidacja zamówień\n");
             foreach (var order in SampleData.Orders)
@@ -317,6 +322,130 @@ namespace lab1_1_net10
             }
 
             Console.WriteLine("\n=== Koniec zadania 3 ===");
+            // BAZA ----------------------------------------------------------------------------------------------------------
+
+            // Połączenie programu z bazą danych
+            using var db = new OrderFlowContext();
+
+            // Utworzenie / aktualizacja bazy danych na podstawie migracji
+            await db.Database.MigrateAsync();
+
+            // Wypełnienie bazy danymi z SampleData
+            await DatabaseSeeder.SeedAsync(db);
+
+            await DbQueryAndTransactionTasks.RunAsync(db);
+
+            Console.WriteLine("\nCRUD\n");
+
+            // CREATE
+
+            // Pobranie istniejącego klienta i produktów z bazy
+            var existingCustomer = await db.Customers.FirstAsync();
+            // Pobranie pierwszego produktu
+            var product1 = await db.Products.FirstAsync();
+            // Pobranie drugiego produktu
+            var product2 = await db.Products.Skip(1).FirstAsync();
+
+            // Utworzenie nowego zamówienia z 2 pozycjami
+            var newOrder = new Order
+            {
+                CustomerId = existingCustomer.Id,
+                Customer = existingCustomer,
+                OrderDate = DateTime.Now,
+                Status = OrderStatus.New,
+                Notes = "Nowe zamówienie CRUD",
+                Items = new List<OrderItem>
+    {
+        new OrderItem
+    {
+        ProductId = product1.Id,
+        Product = product1,
+        Quantity = 1,
+        UnitPrice = product1.Price
+    },
+    new OrderItem
+    {
+        ProductId = product2.Id,
+        Product = product2,
+        Quantity = 2,
+        UnitPrice = product2.Price
+    }
+    }
+            };
+
+            // Przekazanie zamówienia do zapisania
+            db.Orders.Add(newOrder);
+
+            // Zapisanie danych do bazy
+            await db.SaveChangesAsync();
+
+            Console.WriteLine($"Dodano zamówienie #{newOrder.Id} z 2 pozycjami.");
+
+            // READ
+
+            // Pobranie zamówień razem z klientem oraz produktami pozycji zamówienia
+            var orders4 = await db.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                .ToListAsync();
+
+            Console.WriteLine("\n=== Lista zamówień ===");
+
+            foreach (var order in orders4)
+            {
+                Console.WriteLine(
+                    $"\nZamówienie #{order.Id} | Klient: {order.Customer.Name} | Status: {order.Status}");
+
+                foreach (var item in order.Items)
+                {
+                    Console.WriteLine(
+                        $"- {item.Product.Name} | Ilość: {item.Quantity} | Cena: {item.UnitPrice:C}");
+                }
+            }
+
+            // UPDATE
+
+            // Pobranie pierwszego zamówienia ze statusem New
+            var orderToUpdate = await db.Orders
+                // Pobranie pierwszego zamówienia ze statusem New inaczej null
+                .FirstOrDefaultAsync(o => o.Status == OrderStatus.New);
+
+            if (orderToUpdate != null)
+            {
+                // Zmiana statusu i notatki
+                orderToUpdate.Status = OrderStatus.Processing;
+                orderToUpdate.Notes = "Status zmieniony podczas CRUD demo";
+
+                // Zapisanie zmian
+                await db.SaveChangesAsync();
+
+                Console.WriteLine(
+                    $"\nZmieniono status zamówienia #{orderToUpdate.Id} na {orderToUpdate.Status}.");
+            }
+
+            // DELETE
+
+            // Pobranie anulowanego zamówienia
+            var cancelledOrder = await db.Orders
+                // Pobranie pierwszego zamówienia ze statusem Cancelled inaczej null
+                .FirstOrDefaultAsync(o => o.Status == OrderStatus.Cancelled);
+
+            if (cancelledOrder != null)
+            {
+                // Usunięcie zamówienia
+                db.Orders.Remove(cancelledOrder);
+
+                // Zapisanie zmian
+                await db.SaveChangesAsync();
+
+                Console.WriteLine($"\nUsunięto zamówienie #{cancelledOrder.Id}.");
+            }
+            else
+            {
+                Console.WriteLine("\nBrak anulowanego zamówienia do usunięcia.");
+            }
+
             Console.WriteLine("Naciśnij ENTER aby zakończyć...");
             Console.ReadLine();
 

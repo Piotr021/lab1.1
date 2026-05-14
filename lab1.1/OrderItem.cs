@@ -10,12 +10,24 @@ namespace lab1_1_net10
 {
     public class OrderItem
     {
+
+        public int Id { get; set; }
         // XMLElement - zmienia nazwę elementu (tagu) XML
         [XmlElement("productData")]
         public Product Product { get; set; } = new Product();
         // JsonPropertyName - atrybut który zmienia nazwę w formacie JSON
         [XmlAttribute("qty")]
         public int Quantity { get; set; }
+
+        public int OrderId { get; set; }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public Order? Order { get; set; }
+
+        public int ProductId { get; set; }
+
+        public decimal UnitPrice { get; set; }
 
         // JsonIgnore - ignoruj podczas serializacji do formatu JSON/ deserializacji z formatu JSON
         [JsonIgnore]

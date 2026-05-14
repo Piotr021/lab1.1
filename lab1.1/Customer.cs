@@ -20,8 +20,15 @@ namespace lab1_1_net10
         public string Name { get; set; } = "";
 
         public string Email { get; set; } = "";
+
+        public string City { get; set; } = "";
+
         // XmlAttribute - atrybut określający, że dana właściwość będzie reprezentowana jako atrybut w formacie XML
         [XmlAttribute("vip")]
         public bool IsVip { get; set; }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }
