@@ -102,6 +102,21 @@ namespace lab1_1_net10.Tests
             Assert.Equal(300m, discount);
         }
 
+        [Fact]
+        public void StandardowyKlient_ZamowienieDokladnie1000_NieDostajeRabatuZaWysokaWartosc()
+        {
+            // Arrange
+            var order = CreateOrder(isVip: false, price: 1000m);
+            var calculator = new DiscountCalculator();
+
+            // Act
+            var discount = calculator.CalculateDiscount(order);
+
+            // Assert
+            // Reguła mówi "powyżej 1000 zł", czyli dokładnie 1000 zł się nie łapie.
+            Assert.Equal(0m, discount);
+        }
+
         private static Order CreateOrder(bool isVip, decimal price)
         {
             return new Order
