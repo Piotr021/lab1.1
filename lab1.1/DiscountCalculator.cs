@@ -16,6 +16,7 @@ namespace lab1_1_net10
 
             // Zamówienie powyżej 1000 zł dostaje dodatkowe 5%.
             if (order.TotalAmount > 1000m)
+                //
                 discountRate += 0.05m;
 
             return order.TotalAmount * discountRate;
