@@ -39,6 +39,21 @@ namespace lab1_1_net10.Tests
             Assert.Equal(50m, discount);
         }
 
+        [Fact]
+        public void StandardowyKlient_ZamowieniePowyzej1000_ZwracaPiecProcentRabatu()
+        {
+            // Arrange
+            var order = CreateOrder(isVip: false, price: 1200m);
+            var calculator = new DiscountCalculator();
+
+            // Act
+            var discount = calculator.CalculateDiscount(order);
+
+            // Assert
+            // 5% z 1200 zł = 60 zł
+            Assert.Equal(60m, discount);
+        }
+
         private static Order CreateOrder(bool isVip, decimal price)
         {
             return new Order
