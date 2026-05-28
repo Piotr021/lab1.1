@@ -70,6 +70,22 @@ namespace lab1_1_net10.Tests
             Assert.Equal(300m, discount);
         }
 
+        [Fact]
+        public void KlientVip_ZamowieniePowyzej5000_ZwracaDwadziesciaProcentRabatu()
+        {
+            // Arrange
+            var order = CreateOrder(isVip: true, price: 6000m);
+            var calculator = new DiscountCalculator();
+
+            // Act
+            var discount = calculator.CalculateDiscount(order);
+
+            // Assert
+            // 10% za VIP + 5% za kwotę powyżej 1000 zł + 5% za VIP powyżej 5000 zł = 20%
+            // 20% z 6000 zł = 1200 zł
+            Assert.Equal(1200m, discount);
+        }
+
         private static Order CreateOrder(bool isVip, decimal price)
         {
             return new Order
