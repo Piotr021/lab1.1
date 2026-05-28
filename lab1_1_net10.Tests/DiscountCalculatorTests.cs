@@ -118,6 +118,23 @@ namespace lab1_1_net10.Tests
             Assert.Equal(0m, discount);
         }
 
+        [Fact]
+        public void Rabat_NieMozePrzekroczycDwudziestuPieciuProcent()
+        {
+            // Arrange
+            var order = CreateOrder(isVip: true, price: 10000m);
+            var calculator = new DiscountCalculator();
+
+            // Act
+            // Normalnie VIP powyżej 5000 zł ma 20%.
+            // Dodajemy jeszcze 10%, żeby sprawdzić, czy limit zatrzyma rabat na 25%.
+            var discount = calculator.CalculateDiscount(order, extraDiscountRate: 0.10m);
+
+            // Assert
+            // 25% z 10000 zł = 2500 zł
+            Assert.Equal(2500m, discount);
+        }
+
         private static Order CreateOrder(bool isVip, decimal price)
         {
             return new Order
