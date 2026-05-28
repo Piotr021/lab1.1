@@ -135,6 +135,16 @@ namespace lab1_1_net10.Tests
             Assert.Equal(2500m, discount);
         }
 
+        [Fact]
+        public void PusteZamowienie_RzucaArgumentNullException()
+        {
+            // Arrange
+            var calculator = new DiscountCalculator();
+
+            // Act + Assert
+            Assert.Throws<ArgumentNullException>(() => calculator.CalculateDiscount(null!));
+        }
+
         private static Order CreateOrder(bool isVip, decimal price)
         {
             return new Order
