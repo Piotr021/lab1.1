@@ -17,6 +17,7 @@ namespace lab1_1_net10
             if (order.TotalAmount > 1000m)
                 discountRate += 0.05m;
 
+            
             // VIP z zamówieniem powyżej 5000 zł dostaje jeszcze dodatkowe 5%.
             if (order.Customer.IsVip && order.TotalAmount > 5000m)
                 discountRate += 0.05m;
