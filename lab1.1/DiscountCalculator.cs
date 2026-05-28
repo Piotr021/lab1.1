@@ -14,8 +14,7 @@ namespace lab1_1_net10
 
         public decimal CalculateDiscount(Order order, decimal extraDiscountRate)
         {
-            if (order == null)
-                throw new ArgumentNullException(nameof(order));
+           
 
             decimal discountRate = 0m;
 
