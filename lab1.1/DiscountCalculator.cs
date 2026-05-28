@@ -9,6 +9,14 @@ namespace lab1_1_net10
 
         public decimal CalculateDiscount(Order order)
         {
+            return CalculateDiscount(order, 0m);
+        }
+
+        public decimal CalculateDiscount(Order order, decimal extraDiscountRate)
+        {
+            if (order == null)
+                throw new ArgumentNullException(nameof(order));
+
             decimal discountRate = 0m;
 
             if (order.Customer.IsVip)
@@ -17,10 +25,15 @@ namespace lab1_1_net10
             if (order.TotalAmount > 1000m)
                 discountRate += 0.05m;
 
-            
-            // VIP z zamówieniem powyżej 5000 zł dostaje jeszcze dodatkowe 5%.
             if (order.Customer.IsVip && order.TotalAmount > 5000m)
                 discountRate += 0.05m;
+
+            // Dodatkowy rabat pozwala łatwo sprawdzić w teście,
+            // czy limit 25% naprawdę działa.
+            discountRate += extraDiscountRate;
+
+            if (discountRate > 0.25m)
+                discountRate = 0.25m;
 
             return order.TotalAmount * discountRate;
         }
