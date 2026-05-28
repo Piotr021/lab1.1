@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Xunit;
+using lab1_1_net10;
+
+namespace lab1_1_net10.Tests
+{
+    public class DiscountCalculatorTests
+    {
+        [Fact]
+        public void StandardowyKlient_MaleZamowienie_ZwracaZeroRabatu()
+        {
+            // Arrange - przygotowanie danych do testu
+            var order = CreateOrder(isVip: false, price: 500m);
+
+            // Tworzenie instancji kalkulatora 
+            var calculator = new DiscountCalculator();
+
+            // Act - wykonanie testowanej metody
+            var discount = calculator.CalculateDiscount(order);
+
+            // Assert - sprawdzenie wyniku
+            Assert.Equal(0m, discount);
+        }
+
+        private static Order CreateOrder(bool isVip, decimal price)
+        {
+            return new Order
+            {
+                Id = 1,
+                Customer = new Customer
+                {
+                    Id = 1,
+                    Name = "Testowy klient",
+                    Email = "test@example.com",
+                    IsVip = isVip
+                },
+                OrderDate = DateTime.Now,
+                Status = OrderStatus.New,
+                Items = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        Product = new Product
+                        {
+                            Id = 1,
+                            Name = "Produkt testowy",
+                            Category = "Test",
+                            Price = price
+                        },
+                        Quantity = 1
+                    }
+                }
+            };
+        }
+
+    }
+}
