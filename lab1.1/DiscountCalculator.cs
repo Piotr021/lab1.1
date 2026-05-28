@@ -9,12 +9,16 @@ namespace lab1_1_net10
 
         public decimal CalculateDiscount(Order order)
         {
-            // Klient VIP dostaje 10% rabatu.
-            if (order.Customer.IsVip)
-                return order.TotalAmount * 0.10m;
+            decimal discountRate = 0m;
 
-            // Zwykły klient przy małym zamówieniu nie dostaje rabatu.
-            return 0m;
+            if (order.Customer.IsVip)
+                discountRate += 0.10m;
+
+            // Zamówienie powyżej 1000 zł dostaje dodatkowe 5%.
+            if (order.TotalAmount > 1000m)
+                discountRate += 0.05m;
+
+            return order.TotalAmount * discountRate;
         }
 
     }
