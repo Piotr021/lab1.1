@@ -86,6 +86,22 @@ namespace lab1_1_net10.Tests
             Assert.Equal(1200m, discount);
         }
 
+        [Fact]
+        public void StandardowyKlient_ZamowieniePowyzej5000_DostajeTylkoPiecProcentRabatu()
+        {
+            // Arrange
+            var order = CreateOrder(isVip: false, price: 6000m);
+            var calculator = new DiscountCalculator();
+
+            // Act
+            var discount = calculator.CalculateDiscount(order);
+
+            // Assert
+            // Zwykły klient nie dostaje bonusu VIP.
+            // Dostaje tylko 5% za kwotę powyżej 1000 zł.
+            Assert.Equal(300m, discount);
+        }
+
         private static Order CreateOrder(bool isVip, decimal price)
         {
             return new Order
