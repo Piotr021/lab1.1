@@ -102,6 +102,7 @@ namespace lab1_1_net10.Tests
             Assert.Equal(300m, discount);
         }
 
+
         [Fact]
         public void StandardowyKlient_ZamowienieDokladnie1000_NieDostajeRabatuZaWysokaWartosc()
         {
