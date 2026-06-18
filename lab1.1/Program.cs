@@ -449,6 +449,23 @@ namespace lab1_1_net10
             Console.WriteLine("Naciśnij ENTER aby zakończyć...");
             Console.ReadLine();
 
+
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://api.nbp.pl/")
+            };
+
+            ICurrencyService currencyService = new CurrencyService(httpClient);
+            var converter = new OrderCurrencyConverter(currencyService);
+
+            foreach (var order in SampleData.Orders.Take(3))
+            {
+                var usd = await converter.ConvertOrderTotalAsync(order, "USD");
+                var eur = await converter.ConvertOrderTotalAsync(order, "EUR");
+
+                Console.WriteLine($"Order #{order.Id}: {order.TotalAmount:C} = {usd:F2} USD / {eur:F2} EUR");
+            }
+
         }
         private static void RunThreadSafetyDemo()
         {
